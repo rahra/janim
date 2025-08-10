@@ -27,13 +27,16 @@ const { createCanvas } = require('canvas');
 const fs = require('fs');
 const mod_getopt = require('posix-getopt');
 
-
-var width_ = 1920, height_ = 1080;
-var fps_ = 30;
-var crf_ = 22;
-var outfile_ = "a.mkv";
-var vcodec_ = "";
-var format_ = "";
+// rendering parameters
+var rp_ =
+{
+   width: 1920, height: 1080,
+   fps: 30,
+   crf: 22,
+   outfile: "a.mkv",
+   vcodec: "",
+   format: "",
+};
 
 
 function usage()
@@ -70,15 +73,15 @@ while ((option = parser.getopt()) !== undefined)
 	switch (option.option)
    {
       case 'c':
-         crf_ = option.optarg;
+         rp_.crf = option.optarg;
          break;
 
       case 'f':
-         format_ = option.optarg;
+         rp_.format = option.optarg;
          break;
 
       case 'H':
-         height_ = parseInt(option.optarg);
+         rp_.height = parseInt(option.optarg);
          break;
 
       case 'h':
@@ -86,7 +89,7 @@ while ((option = parser.getopt()) !== undefined)
          process.exit(0);
 
       case 'r':
-         fps_ = option.optarg;
+         rp_.fps = option.optarg;
          break;
 
       case 'v':
@@ -94,7 +97,7 @@ while ((option = parser.getopt()) !== undefined)
          break;
 
       case 'W':
-         width_ = parseInt(option.optarg);
+         rp_.width = parseInt(option.optarg);
          break;
 
       default:
@@ -105,20 +108,20 @@ while ((option = parser.getopt()) !== undefined)
 }
 
 if (parser.optind() < process.argv.length)
-   outfile_ = process.argv[parser.optind()];
+   rp_.outfile = process.argv[parser.optind()];
 
 // set default values
-if (!vcodec_)
+if (!rp_.vcodec)
 {
-   switch (outfile_.split('.').pop())
+   switch (rp_.outfile.split('.').pop())
    {
       case "mkv":
       case "mov":
-         vcodec_ = "png";
+         rp_.vcodec = "png";
          break;
 
       case "webm":
-         vcodec_ = "vp9";
+         rp_.vcodec = "vp9";
          break;
 /*
       default:
@@ -127,34 +130,32 @@ if (!vcodec_)
    }
 }
 
-console.log(width_);
-
 // create canvas
-const canvas = createCanvas(width_, height_);
+const canvas = createCanvas(rp_.width, rp_.height);
 const ctx = canvas.getContext('2d');
 
 // options passed to ffmpeg
 var ffopts_ = 
    [
-      "-y",                         // overwrite output file if it exists
-      "-r", fps_,                   // input frame rate (same as output)
-      "-f", "rawvideo",             // input format
-      "-pix_fmt", "argb",           // input pixel format
-      "-s", `${width_}x${height_}`, // input resolution
-      "-i", "pipe:0",               // input file (stdin)
-      "-r", fps_,                   // output framerate
-      "-crf", crf_,                 // output compression (lower number -> lower compression -> higher quality -> bigger file)
-      //"-vcodec", vcodec_          // output codec (is pushed below)
-      //"-f", format                // output format (is pushed below)
+      "-y",                               // overwrite output file if it exists
+      "-r", rp_.fps,                      // input frame rate (same as output)
+      "-f", "rawvideo",                   // input format
+      "-pix_fmt", "argb",                 // input pixel format
+      "-s", `${rp_.width}x${rp_.height}`, // input resolution
+      "-i", "pipe:0",                     // input file (stdin)
+      "-r", rp_.fps,                      // output framerate
+      "-crf", rp_.crf,                    // output compression (lower number -> lower compression -> higher quality -> bigger file)
+      //"-vcodec", vcodec_                // output codec (is pushed below)
+      //"-f", format                      // output format (is pushed below)
    ];
 // add output video codec if option is available
-if (vcodec_)
-   ffopts_.push("-vcodec", vcodec_);
+if (rp_.vcodec)
+   ffopts_.push("-vcodec", rp_.vcodec);
 // add format option if available
-if (format_.length)
-   ffopts_.push("-f", format_);
+if (rp_.format.length)
+   ffopts_.push("-f", rp_.format);
 // finally add output filename
-ffopts_.push(outfile_);
+ffopts_.push(rp_.outfile);
 
 // spawn ffmpeg child process
 const ffmpeg = spawn("ffmpeg", ffopts_, {stdio: 'pipe'});
@@ -188,7 +189,7 @@ for (var i = 0; i < 30; i++)
    // draw frame
    update_frame(i);
    // write frame data to ffmpeg
-   ffmpeg.stdin.write(canvas.getContext('2d').getImageData(0, 0, width_, height_).data);
+   ffmpeg.stdin.write(canvas.getContext('2d').getImageData(0, 0, rp_.width, rp_.height).data);
 }
 
 // close stream (and cause ffmpeg to finalize encoding)
