@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "canvas": "^3.1.2",
+    "posix-getopt": "^1.2.1"
+  }
+}
