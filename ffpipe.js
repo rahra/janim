@@ -27,10 +27,12 @@ const { createCanvas } = require('canvas');
 const fs = require('fs');
 const mod_getopt = require('posix-getopt');
 
-// rendering parameters
+
+//! rendering parameters
 var rp_ =
 {
    width: 1920, height: 1080,
+   ifps: 0,
    fps: 30,
    crf: 22,
    outfile: "a.mkv",
@@ -39,6 +41,8 @@ var rp_ =
 };
 
 
+/*! Output usage message.
+ */
 function usage()
 {
    console.log(
@@ -48,8 +52,10 @@ function usage()
       "   -c <crf> .......... Define CRF (ffmpeg -crf), default = 22.\n\n" +
       "   --help\n" +
       "   -h ................ Outut this help.\n\n" +
+      "   --ifps=<ifps>\n" +
+      "   -R <ifps> ......... Number of input frames per second, default = <output fps>\n\n" +
       "   --fps=<fps>\n" +
-      "   -r <fps> .......... Number of frames per second, default = 30.\n\n" +
+      "   -r <fps> .......... Number of output frames per second, default = 30.\n\n" +
       "   --vcodec=<vcodec>\n" +
       "   -v <vcodec> ....... Output video codec, default = 'png'.\n\n" +
       "   <file> ............ Output file and container format, default = 'a.mkv'.\n" +
@@ -67,7 +73,8 @@ function usage()
 }
 
 
-var parser = new mod_getopt.BasicParser('c:(crf)f:(format)h(help)r:(fps)v:(vcodec)W:(width)H:(height)', process.argv);
+// parse CLI args
+var parser = new mod_getopt.BasicParser('c:(crf)f:(format)h(help)R:(ifps)r:(fps)v:(vcodec)W:(width)H:(height)', process.argv);
 while ((option = parser.getopt()) !== undefined)
 {
 	switch (option.option)
@@ -87,6 +94,10 @@ while ((option = parser.getopt()) !== undefined)
       case 'h':
          usage();
          process.exit(0);
+
+      case 'R':
+         rp_.ifps = option.optarg;
+         break;
 
       case 'r':
          rp_.fps = option.optarg;
@@ -111,6 +122,9 @@ if (parser.optind() < process.argv.length)
    rp_.outfile = process.argv[parser.optind()];
 
 // set default values
+if (!rp_.ifps)
+   rp_.ifps = rp_.fps;
+
 if (!rp_.vcodec)
 {
    switch (rp_.outfile.split('.').pop())
@@ -138,7 +152,7 @@ const ctx = canvas.getContext('2d');
 var ffopts_ = 
    [
       "-y",                               // overwrite output file if it exists
-      "-r", rp_.fps,                      // input frame rate (same as output)
+      "-r", rp_.ifps,                     // input frame rate (same as output)
       "-f", "rawvideo",                   // input format
       "-pix_fmt", "argb",                 // input pixel format
       "-s", `${rp_.width}x${rp_.height}`, // input resolution
