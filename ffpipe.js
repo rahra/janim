@@ -175,33 +175,100 @@ ffopts_.push(rp_.outfile);
 const ffmpeg = spawn("ffmpeg", ffopts_, {stdio: 'pipe'});
 
 // output ffmpeg data to console
-ffmpeg.stderr.on('data', (data) => {console.error(`stderr: ${data}`);});
+ffmpeg.stderr.on('data', (data) => {console.error(`${data}`);});
 // output exit code of ffmpeg to console
 ffmpeg.on('close', (code) => {console.log(`child process exited with code ${code}`);});
 
 
-const randomColor = (depth) => Math.floor(Math.random() * depth);
-const random = (min, max) => (Math.random() * (max - min)) + min;
-
-
-// function to update the frame
-function update_frame(fcnt)
+/*! This class creates the (sample) animation.
+ * Call update() for the frame to be updated every time.
+ */
+class JAnim
 {
-   ctx.strokeStyle = `rgb(${randomColor(255)}, ${randomColor(255)}, ${randomColor(255)})`
-   let x1 = random(0, canvas.width);
-   let x2 = random(0, canvas.width);
-   let y1 = random(0, canvas.height);
-   let y2 = random(0, canvas.height);
-   ctx.moveTo(x1, y1);
-   ctx.lineTo(x2, y2);
-   ctx.stroke();
+   constructor(canvas)
+   {
+      // canvas
+      this.canvas = canvas;
+      // drawing context
+      this.ctx = canvas.getContext('2d');
+      // frame counter
+      this.frame = 0;
+
+      // initial colorvalue
+      this.rgb = [Math.floor(Math.random() * 255), Math.floor(Math.random() * 255), Math.floor(Math.random() * 255)];
+      this.rgbd = [7, 11, 13];
+
+      // initial coordinates
+      this.x = [Math.floor(Math.random() * canvas.width), Math.floor(Math.random() * canvas.width), Math.floor(Math.random() * canvas.width)];
+      this.y = [Math.floor(Math.random() * canvas.height), Math.floor(Math.random() * canvas.height), Math.floor(Math.random() * canvas.height)];
+      // initial coordinate incrementals
+      this.xd = [15, 20, 10];
+      this.yd = [20, 15, 10];
+
+      // call initialization
+      this.init();
+   }
+
+
+   init()
+   {
+      this.ctx.fillStyle = "rgba(0, 0, 0, 0)";
+      this.ctx.beginPath();
+      this.ctx.rect(0, 0, this.canvas.width, this.canvas.height);
+      this.ctx.fill();
+   }
+
+
+   update()
+   {
+      this.ctx.beginPath();
+      this.ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+      this.ctx.rect(0, 0, this.canvas.width, this.canvas.height);
+      this.ctx.fill();
+
+      this.ctx.beginPath();
+      for (var i = 0; i < 3; i++)
+      {
+         this.count(this.x, this.xd, i, this.canvas.width);
+         this.count(this.y, this.yd, i, this.canvas.height);
+         this.ctx.lineTo(this.x[i], this.y[i]);
+      }
+      this.ctx.closePath();
+
+      // adjust color value of triangle
+      for (var i = 0; i < 3; i++)
+      {
+         this.count(this.rgb, this.rgbd, i, 256);
+      }
+
+      this.ctx.fillStyle = `rgb(${this.rgb[0]}, ${this.rgb[1]}, ${this.rgb[2]})`;
+      this.ctx.fill();
+   }
+
+
+   count(v, d, i, n)
+   {
+      v[i] += d[i];
+      if (v[i] < 0)
+      {
+         d[i] *= -1;
+         v[i] += d[i];
+      }
+      else if (v[i] >= n)
+      {
+         d[i] *= -1;
+         v[i] += d[i];
+      }
+   }
 }
 
 
-for (var i = 0; i < 30; i++)
+var anim = new JAnim(canvas);
+
+for (var i = 0; i < 300; i++)
 {
    // draw frame
-   update_frame(i);
+   anim.update();
    // write frame data to ffmpeg
    ffmpeg.stdin.write(canvas.getContext('2d').getImageData(0, 0, rp_.width, rp_.height).data);
 }
