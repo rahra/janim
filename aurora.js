@@ -452,13 +452,14 @@ function createAurora(canvas, fps = 30)
 }
 
 
+ffpipe.init_args(process.argv);
+ffpipe.init_ffmpeg();
+
 // create canvas
 const canvas = createCanvas(ffpipe.width, ffpipe.height);
 
 var aurora = createAurora(canvas)
 
-ffpipe.init_args(process.argv);
-ffpipe.init_ffmpeg();
 ffpipe.render(aurora, 300);
 
 
