@@ -23,10 +23,12 @@ function createAurora(canvas, fps = 30)
    var d = 4;
    // number of polynom components
    var n = 8;
-   // display curve (debugging)
-   var curve = 1;
-
+   // here go the params for the Fourier series
    var a = [], b = [], k = [];
+   // function value, i.e. result of Fourier series
+   var f = [];
+
+   // base initialization for Fourier params
    for (var i = 0; i < n; i++)
    {
       a.push(Math.random());
@@ -34,23 +36,25 @@ function createAurora(canvas, fps = 30)
       k.push(Math.random());
    }
 
-   var f = [];
-
    ctx.strokeStyle = "#ffffff";
 
+   // helper function, returns a random value r which is -a <= r <= a.
    rdiff = function(a)
    {
-      return Math.random() * a - a * 0.5;
+      return a * 2 * Math.random() - a;
    }
 
+   // helper function, returns a value r which is always -1 <= a <= 1, i.e. if
+   // a > 1, 1 is returned and if a < -1, -1 is returned.
    bound = function(a)
    {
       return Math.min(1, Math.abs(a)) * Math.sign(a);
    }
 
+   // Updates the parameters of the Fourier series.
    update_param = function()
    {
-      var m = 0.2;
+      var m = 0.1;   // drift rate
       for (var i = 0; i < n; i++)
       {
          a[i] = bound(a[i] + rdiff(m));
@@ -59,12 +63,10 @@ function createAurora(canvas, fps = 30)
       }
    }
 
-   this.update = function()
+   // Calculate base function which is a random Fourier series. This gives the
+   // Aurora its shape.
+   calc = function()
    {
-      frame++;
-
-      update_param();
-
       for (var x = 0; x < width; x += d)
       {
          var t = x * Math.PI / width;
@@ -74,12 +76,20 @@ function createAurora(canvas, fps = 30)
 
          f[x] = v / n;
       }
+   }
+
+   this.update = function()
+   {
+      frame++;
+
+      update_param();
+      calc();
 
       //ctx.clearRect(0, 0, width, height);
       ctx.fillStyle = "rgb(0,0,0,0.1)";      // transparency determines after glow
       ctx.fillRect(0, 0, width, height);
 
-      /* Draw curve */
+      /* draw curve (this is for debugging) */
       if (1)
       {
          // axis
@@ -95,7 +105,7 @@ function createAurora(canvas, fps = 30)
          ctx.stroke();
       }
 
-      /* Draw bars */
+      /* draw Aurora */
       //if (0)
       for (var x = 0; x < width - d; x += d)
       {
