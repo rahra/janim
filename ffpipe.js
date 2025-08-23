@@ -211,6 +211,7 @@ module.exports =
 {
    width: rp_.width,
    height: rp_.height,
+   fps: rp_.fps,
    init_args,
    init_ffmpeg,
    render
