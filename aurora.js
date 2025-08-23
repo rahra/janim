@@ -36,6 +36,7 @@ function createAurora(canvas)
       b.push(Math.random())
    }
 
+   ctx.clearRect(0, 0, width, height);
    ctx.strokeStyle = "#ffffff";
 
    // helper function, returns a random value r which is -a <= r <= a.
@@ -106,9 +107,13 @@ function createAurora(canvas)
       update_param();
       calc();
 
-      //ctx.fillStyle = "rgb(0,0,0,1)";
-      ctx.fillStyle = "rgb(0,0,0,0.2)";      // transparency determines after glow
+      // fade out previous frame
+      //ctx.clearRect(0, 0, width, height);
+      ctx.save();
+      ctx.globalCompositeOperation = "destination-out";
+      ctx.fillStyle = "rgba(255,255,255,0.3)";
       ctx.fillRect(0, 0, width, height);
+      ctx.restore();
 
       /* draw curve (this is for debugging) */
       if (0)
