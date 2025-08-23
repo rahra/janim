@@ -19,6 +19,8 @@ function createAurora(canvas, fps = 30)
    var rate = 8;
    //! frequency scaling
    var fs = 16;
+   //! max intensity (0.0 - 1.0)
+   var I = 0.6;
    // horizontal resolution
    var d = 4;
    // number of polynom components
@@ -109,11 +111,11 @@ function createAurora(canvas, fps = 30)
       calc();
 
       //ctx.fillStyle = "rgb(0,0,0,1)";
-      ctx.fillStyle = "rgb(0,0,0,0.1)";      // transparency determines after glow
+      ctx.fillStyle = "rgb(0,0,0,0.2)";      // transparency determines after glow
       ctx.fillRect(0, 0, width, height);
 
       /* draw curve (this is for debugging) */
-      if (1)
+      if (0)
       {
          // axis
          ctx.beginPath();
@@ -129,7 +131,6 @@ function createAurora(canvas, fps = 30)
       }
 
       /* draw Aurora */
-      //if (0)
       for (var x = 0; x < width / d - 1; x++)
       {
          var c = Math.floor((f[x] + 1) * 128);
@@ -142,7 +143,7 @@ function createAurora(canvas, fps = 30)
 
          var gt = ctx.createLinearGradient(x, 0, x, y0);
          //gt.addColorStop(0, `rgba(${c},${c},${c},${v})`);
-         gt.addColorStop(0, aurora_color((f[x] + 1) * 0.5, v));
+         gt.addColorStop(0, aurora_color((f[x] + 1) * 0.5, v * I));
          gt.addColorStop(1, 'rgba(0,0,0,0)');
          ctx.fillStyle = gt;
          //ctx.fillStyle = `rgba(${c},${c},${c},${v})`;
