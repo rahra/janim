@@ -78,6 +78,28 @@ function createAurora(canvas, fps = 30)
       }
    }
 
+   // Return an Aurora-like HTML color dependent on f, where is 0 <= f <= 1.
+   aurora_color = function(f, a)
+   {
+      //blue, green, yellow, red
+      const acols =
+         [
+            {r: 0, g: 0, b: 1},
+            {r: 0, g: 1, b: 0},
+            {r: 1, g: 1, b: 0},
+            {r: 1, g: 0, b: 0}
+         ];
+
+      var d = 1 / (acols.length - 1);
+      var i = Math.floor(f / d);
+      var s = f / d - i;
+      var r = Math.floor(256 * ((1 - s) * acols[i].r + s * acols[i + 1].r));
+      var g = Math.floor(256 * ((1 - s) * acols[i].g + s * acols[i + 1].g));
+      var b = Math.floor(256 * ((1 - s) * acols[i].b + s * acols[i + 1].b));
+
+      return `rgba(${r},${g},${b},${a})`;
+   }
+
    this.update = function()
    {
       frame++;
@@ -85,7 +107,7 @@ function createAurora(canvas, fps = 30)
       update_param();
       calc();
 
-      //ctx.clearRect(0, 0, width, height);
+      //ctx.fillStyle = "rgb(0,0,0,1)";
       ctx.fillStyle = "rgb(0,0,0,0.1)";      // transparency determines after glow
       ctx.fillRect(0, 0, width, height);
 
@@ -115,7 +137,8 @@ function createAurora(canvas, fps = 30)
          var y1 = h * Math.abs(f[x + d]);
 
          var gt = ctx.createLinearGradient(x, 0, x, y0);
-         gt.addColorStop(0, `rgba(${c},${c},${c},${v})`);
+         //gt.addColorStop(0, `rgba(${c},${c},${c},${v})`);
+         gt.addColorStop(0, aurora_color((f[x] + 1) * 0.5, v));
          gt.addColorStop(1, 'rgba(0,0,0,0)');
          ctx.fillStyle = gt;
          //ctx.fillStyle = `rgba(${c},${c},${c},${v})`;
