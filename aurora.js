@@ -5,7 +5,7 @@
  */
 
 
-function createAurora(canvas, fps = 30)
+function createAurora(canvas)
 {
    this.canvas = canvas;
    var ctx = canvas.getContext('2d');
@@ -15,12 +15,12 @@ function createAurora(canvas, fps = 30)
    var h = height;
    //! frame counter (doesn't do anything yet)
    var frame = 0;
-   //! change rate of Aurora, higher values = faster
-   var rate = 8;
    //! frequency scaling
    var fs = 16;
    //! max intensity (0.0 - 1.0)
    var I = 0.6;
+   //! drift factor, this is the change from one frame to the next
+   var D = 0.05;
    // horizontal resolution
    var d = 4;
    // number of polynom components
@@ -56,11 +56,10 @@ function createAurora(canvas, fps = 30)
    // Updates the parameters of the Fourier series.
    update_param = function()
    {
-      var m = 0.1;   // drift rate
       for (var i = 0; i < n; i++)
       {
-         a[i] = bound(a[i] + rdiff(m));
-         b[i] = bound(b[i] + rdiff(m));
+         a[i] = bound(a[i] + rdiff(D));
+         b[i] = bound(b[i] + rdiff(D));
          //k[i] = Math.abs(k[i] += s);
       }
    }
@@ -174,7 +173,7 @@ if (typeof window === 'undefined')
    ffpipe.init_args(process.argv);
    ffpipe.init_ffmpeg();
 
-   var aurora = createAurora(canvas, ffpipe.fps)
+   var aurora = createAurora(canvas)
 
    ffpipe.render(aurora, 300);
 }
