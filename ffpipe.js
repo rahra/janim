@@ -165,7 +165,7 @@ function init_ffmpeg()
          "-y",                               // overwrite output file if it exists
          "-r", rp_.ifps,                     // input frame rate (same as output)
          "-f", "rawvideo",                   // input format
-         "-pix_fmt", "argb",                 // input pixel format
+         "-pix_fmt", "rgba",                 // input pixel format
          "-s", `${rp_.width}x${rp_.height}`, // input resolution
          "-i", "pipe:0",                     // input file (stdin)
          "-r", rp_.fps,                      // output framerate
