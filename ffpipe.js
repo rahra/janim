@@ -53,12 +53,16 @@ function usage()
       "   -c <crf> .......... Define CRF (ffmpeg -crf), default = 22.\n\n" +
       "   --help\n" +
       "   -h ................ Outut this help.\n\n" +
+      "   --height=<h>\n" +
+      "   -H <h> ............ Height of frame in pixels, default = 1080.\n\n" +
       "   --ifps=<ifps>\n" +
       "   -R <ifps> ......... Number of input frames per second, default = <output fps>\n\n" +
       "   --fps=<fps>\n" +
       "   -r <fps> .......... Number of output frames per second, default = 30.\n\n" +
       "   --vcodec=<vcodec>\n" +
       "   -v <vcodec> ....... Output video codec, default = 'png'.\n\n" +
+      "   --width=<w>\n" +
+      "   -W <w> ............ Width of frame in pixels, default = 1920.\n\n" +
       "   <file> ............ Output file and container format, default = 'a.mkv'.\n" +
       "\n" +
       "   The video codecs and the filename is directly passed to ffmpeg.\n" +
