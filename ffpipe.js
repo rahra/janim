@@ -209,9 +209,9 @@ function render(janim, n)
 
 module.exports =
 {
-   width: rp_.width,
-   height: rp_.height,
-   fps: rp_.fps,
+   get width() {return rp_.width},
+   get height() { return rp_.height},
+   get fps() { return rp_.fps},
    init_args,
    init_ffmpeg,
    render
