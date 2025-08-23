@@ -111,6 +111,7 @@ function createAurora(canvas)
       //ctx.clearRect(0, 0, width, height);
       ctx.save();
       ctx.globalCompositeOperation = "destination-out";
+      ctx.globalAlpha = 0.3;
       ctx.fillStyle = "rgba(255,255,255,0.3)";
       ctx.fillRect(0, 0, width, height);
       ctx.restore();
@@ -171,10 +172,10 @@ if (typeof window === 'undefined')
    const { createCanvas } = require('canvas');
    const ffpipe = require("./ffpipe.js");
 
-   const canvas = createCanvas(ffpipe.width, ffpipe.height);
    ffpipe.init_args(process.argv);
    ffpipe.init_ffmpeg();
 
+   const canvas = createCanvas(ffpipe.width, ffpipe.height);
    var aurora = createAurora(canvas)
 
    ffpipe.render(aurora, 300);
