@@ -15,8 +15,6 @@ function createAurora(canvas)
    var h = height;
    //! frame counter (doesn't do anything yet)
    var frame = 0;
-   //! frequency scaling
-   var fs = 16;
    //! max intensity (0.0 - 1.0)
    var I = 0.6;
    //! drift factor, this is the change from one frame to the next
@@ -26,16 +24,16 @@ function createAurora(canvas)
    // number of polynom components
    var n = 8;
    // here go the params for the Fourier series
-   var a = [], b = [], k = [];
+   var a = [], b = [];
    // function value, i.e. result of Fourier series
    var f = [];
 
    // base initialization for Fourier params
+   var a0 = Math.random();
    for (var i = 0; i < n; i++)
    {
       a.push(Math.random());
       b.push(Math.random())
-      k.push(Math.random());
    }
 
    ctx.strokeStyle = "#ffffff";
@@ -60,7 +58,6 @@ function createAurora(canvas)
       {
          a[i] = bound(a[i] + rdiff(D));
          b[i] = bound(b[i] + rdiff(D));
-         //k[i] = Math.abs(k[i] += s);
       }
    }
 
@@ -70,10 +67,10 @@ function createAurora(canvas)
    {
       for (var x = 0; x < width / d; x++)
       {
-         var t = x * Math.PI / (width / d);
-         var v = 0;
+         var t = x * 2 * Math.PI / (width / d);
+         var v = a0 * 0.5;
          for (var i = 0; i < n; i++)
-            v += a[i] * Math.cos(k[i] * t * fs) + b[i] * Math.sin(k[i] * t * fs);
+            v += a[i] * Math.cos(i * t) + b[i] * Math.sin(i * t);
 
          f[x] = v / n;
          //f[x] = Math.log(Math.abs(f[x]) * (Math.E - 1) + 1) * Math.sign(f[x]);
