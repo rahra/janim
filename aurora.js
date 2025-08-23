@@ -67,14 +67,15 @@ function createAurora(canvas, fps = 30)
    // Aurora its shape.
    calc = function()
    {
-      for (var x = 0; x < width; x += d)
+      for (var x = 0; x < width / d; x++)
       {
-         var t = x * Math.PI / width;
+         var t = x * Math.PI / (width / d);
          var v = 0;
          for (var i = 0; i < n; i++)
             v += a[i] * Math.cos(k[i] * t * fs) + b[i] * Math.sin(k[i] * t * fs);
 
          f[x] = v / n;
+         //f[x] = Math.log(Math.abs(f[x]) * (Math.E - 1) + 1) * Math.sign(f[x]);
       }
    }
 
@@ -122,19 +123,22 @@ function createAurora(canvas, fps = 30)
 
          // curve
          ctx.beginPath();
-         for (var x = 0; x < width; x += d)
-            ctx.lineTo(x, height * 0.5 - f[x] * height * 0.5);
+         for (var x = 0; x < width / d; x++)
+            ctx.lineTo(x * d, height * 0.5 - f[x] * height * 0.5);
          ctx.stroke();
       }
 
       /* draw Aurora */
       //if (0)
-      for (var x = 0; x < width - d; x += d)
+      for (var x = 0; x < width / d - 1; x++)
       {
          var c = Math.floor((f[x] + 1) * 128);
          var v = Math.abs(f[x]) * 2;
+
+         var x0 = x * d;
+         var x1 = x0 + d;
          var y0 = h * Math.abs(f[x]);
-         var y1 = h * Math.abs(f[x + d]);
+         var y1 = h * Math.abs(f[x + 1]);
 
          var gt = ctx.createLinearGradient(x, 0, x, y0);
          //gt.addColorStop(0, `rgba(${c},${c},${c},${v})`);
@@ -143,10 +147,10 @@ function createAurora(canvas, fps = 30)
          ctx.fillStyle = gt;
          //ctx.fillStyle = `rgba(${c},${c},${c},${v})`;
          ctx.beginPath();
-         ctx.moveTo(x, 0);
-         ctx.lineTo(x, y0);
-         ctx.lineTo(x + d, y1);
-         ctx.lineTo(x + d, 0);
+         ctx.moveTo(x0, 0);
+         ctx.lineTo(x0, y0);
+         ctx.lineTo(x1, y1);
+         ctx.lineTo(x1, 0);
          ctx.closePath();
          ctx.fill();
       }
