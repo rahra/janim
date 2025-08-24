@@ -121,7 +121,7 @@ function init_args(argv)
             break;
 
          case 'v':
-            vcodec_ = option.optarg;
+            rp_.vcodec = option.optarg;
             break;
 
          case 'W':
