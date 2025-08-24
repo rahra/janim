@@ -176,9 +176,9 @@ if (typeof window === 'undefined')
    ffpipe.init_ffmpeg();
 
    const canvas = createCanvas(ffpipe.width, ffpipe.height);
-   var aurora = createAurora(canvas)
+   var anim = createAurora(canvas);
 
-   ffpipe.render(aurora, 300);
+   ffpipe.render(anim, 300);
 }
 else
 {
@@ -189,8 +189,7 @@ else
    canvas.width = window.innerWidth;
    canvas.height = window.innerHeight;
 
-   var aurora = createAurora(canvas, fps)
+   var anim = createAurora(canvas);
 
-   var timer = window.setInterval(aurora.update, 1000 / fps);
+   var timer = window.setInterval(anim.update, 1000 / fps);
 }
-
