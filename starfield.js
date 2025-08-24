@@ -14,10 +14,12 @@ function starfield(canvas)
    var ctx = canvas.getContext('2d');
    // frame counter
    var frame = 0;
-   // globale speed
-   var S = 8;
+   // shuttle speed
+   var S = 1;
+   // star accelaration
+   var A = 1.03;
    // number of stars
-   var cnt = 150;
+   var cnt = 200;
    // star parameters
    var star = [];
 
@@ -27,19 +29,21 @@ function starfield(canvas)
    init_star = function(s)
    {
       s.a = 2 * Math.PI * Math.random();
-      s.r = Math.random() * 0.5 + 0.5;
+      //s.r = Math.random() * 0.5 + 0.5;
+      s.r = Math.random();
       s.c = Math.random();
       s.t = frame;
    }
 
    fade_out = function()
    {
+      let f = 0.7;
       // fade out previous frame
       //ctx.clearRect(0, 0, width, height);
       ctx.save();
       ctx.globalCompositeOperation = "destination-out";
-      ctx.globalAlpha = 0.8;
-      ctx.fillStyle = "rgba(255,255,255,0.8)";
+      ctx.globalAlpha = f;
+      ctx.fillStyle = `rgba(255,255,255,${f})`;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.restore();
    }
@@ -77,9 +81,10 @@ function starfield(canvas)
       }
 
       // star transparency
-      var a = Math.max(Math.abs(x) / (canvas.width * 0.5), Math.abs(y) / (canvas.height * 0.5)) * 0.7 + 0.3;
+      var a = Math.max(Math.abs(x) / (canvas.width * 0.5), Math.abs(y) / (canvas.height * 0.5));
       // star radius
-      var r = 6 * s.r * a;
+      //var r = 1 * s.r * a;
+      var r = 2;
 
       ctx.beginPath();
       ctx.arc(x, y, r, 0, 2 * Math.PI);
@@ -87,6 +92,7 @@ function starfield(canvas)
       ctx.fillStyle = star_color(s.c, a);
       ctx.fill();
 
+      s.r *= A;
    }
 
    this.update = function()
