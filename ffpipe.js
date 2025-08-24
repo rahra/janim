@@ -19,7 +19,7 @@
 
  * \file ffpipe.js
  * \author Bernhard R. Fischer, bf@abenteuerland.at
- * \date 2025/08/12
+ * \date 2025/08/24
  */
 
 const { spawn } = require('child_process');
@@ -78,6 +78,14 @@ function usage()
 }
 
 
+function date_str()
+{
+   const n = new Date();
+   const p = (s) => ("" + s).padStart(2, "0");
+   return `${n.getFullYear()}${p(n.getMonth() + 1)}${p(n.getDate())}_${p(n.getHours())}${p(n.getMinutes())}${p(n.getSeconds())}`;
+}
+
+
 /*! This function initializes the rendering parameters depending on the CLI arguments.
  */
 function init_args(argv)
@@ -129,6 +137,14 @@ function init_args(argv)
 
    if (parser.optind() < process.argv.length)
       rp_.outfile = process.argv[parser.optind()];
+   else
+   {
+      rp_.outfile = date_str();
+      if (rp_.vcodec == "vp9")
+         rp_.outfile += ".webm";
+      else
+         rp_.outfile += ".mkv";
+   }
 
    // set default values
    if (!rp_.ifps)
