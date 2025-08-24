@@ -208,14 +208,14 @@ function init_ffmpeg()
 }
 
 
-function render(janim, n)
+function render(canvas, anim, n)
 {
    for (var i = 0; i < n; i++)
    {
       // draw frame
-      janim.update();
+      anim();
       // write frame data to ffmpeg
-      ffmpeg.stdin.write(janim.canvas.getContext('2d').getImageData(0, 0, rp_.width, rp_.height).data);
+      ffmpeg.stdin.write(canvas.getContext('2d').getImageData(0, 0, rp_.width, rp_.height).data);
    }
 
    // close stream (and cause ffmpeg to finalize encoding)

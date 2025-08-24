@@ -178,7 +178,7 @@ if (typeof window === 'undefined')
    const canvas = createCanvas(ffpipe.width, ffpipe.height);
    var anim = createAurora(canvas);
 
-   ffpipe.render(anim, 300);
+   ffpipe.render(canvas, anim.update, 300);
 }
 else
 {
