@@ -15,9 +15,7 @@ function starfield(canvas)
    // frame counter
    var frame = 0;
    // shuttle speed
-   var S = 1;
-   // star accelaration
-   var A = 1.03;
+   var S = 8;
    // number of stars
    var cnt = 200;
    // star parameters
@@ -71,8 +69,9 @@ function starfield(canvas)
 
    update_star = function(s)
    {
-      var x = S * (frame - s.t) * s.r * Math.cos(s.a);
-      var y = S * (frame - s.t) * s.r * Math.sin(s.a);
+      let r_ = S * s.r * Math.pow((frame - s.t) * 0.07, 2);
+      var x = r_ * Math.cos(s.a);
+      var y = r_ * Math.sin(s.a);
 
       if (x < -canvas.width * 0.5 || x >= canvas.width * 0.5 || y < -canvas.height * 0.5 || y >= canvas.height * 0.5)
       {
@@ -91,8 +90,6 @@ function starfield(canvas)
       //ctx.fillStyle = `rgba(255,255,255,${a})`;
       ctx.fillStyle = star_color(s.c, a);
       ctx.fill();
-
-      s.r *= A;
    }
 
    this.update = function()
@@ -101,6 +98,24 @@ function starfield(canvas)
 
       fade_out();
 
+      // curve (debugging)
+      if (0)
+      {
+         ctx.save();
+         ctx.translate(canvas.width * 0.5, canvas.height * 0.5);
+         ctx.beginPath();
+         ctx.moveTo(0, 0);
+         let s = star[0];
+         for (let frame = s.t; ; frame++)
+         {
+            let r_ = S * s.r * Math.pow((frame - s.t) * 0.05, 2);
+            if (r_ > Math.hypot(canvas.width * 0.5, canvas.height * 0.5))
+               break;
+            ctx.lineTo(frame - s.t, -r_);
+         }
+         ctx.stroke();
+         ctx.restore();
+      }
 
       ctx.save();
       ctx.translate(canvas.width * 0.5, canvas.height * 0.5);
@@ -110,6 +125,7 @@ function starfield(canvas)
 
    star.forEach(init_star);
 
+   ctx.strokeStyle = "#20ff20";
    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
    return this;
