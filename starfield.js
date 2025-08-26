@@ -15,15 +15,15 @@ function starfield(canvas)
    // frame counter
    var frame = 0;
    // shuttle speed
-   var S = 8;
+   var S = 12;
    // number of stars
    var cnt = 200;
+   // star radius
+   var R = 2.5;
    // star parameters
    var star = [];
 
-   for (let i = 0; i < cnt; i++)
-      star[i] = {a: 0, r: 0, c: 0, t: 0};
-
+   // init values of new star
    init_star = function(s)
    {
       s.a = 2 * Math.PI * Math.random();
@@ -31,8 +31,10 @@ function starfield(canvas)
       s.r = Math.random();
       s.c = Math.random();
       s.t = frame;
+      s.p = Math.random() * 2 + 1;  // -> 1 <= p <= 3
    }
 
+   // fade to transparency
    fade_out = function()
    {
       let f = 0.7;
@@ -67,11 +69,14 @@ function starfield(canvas)
       return `rgba(${r},${g},${b},${a})`;
    }
 
+   // calculate and draw a star
    update_star = function(s)
    {
-      let r_ = S * s.r * Math.pow((frame - s.t) * 0.07, 2);
-      var x = r_ * Math.cos(s.a);
-      var y = r_ * Math.sin(s.a);
+      // distance of star from center
+      let r = S * s.r * Math.pow((frame - s.t) * 0.07, s.p);
+      // star coordinates
+      var x = r * Math.cos(s.a);
+      var y = r * Math.sin(s.a);
 
       if (x < -canvas.width * 0.5 || x >= canvas.width * 0.5 || y < -canvas.height * 0.5 || y >= canvas.height * 0.5)
       {
@@ -82,40 +87,21 @@ function starfield(canvas)
       // star transparency
       var a = Math.max(Math.abs(x) / (canvas.width * 0.5), Math.abs(y) / (canvas.height * 0.5));
       // star radius
-      //var r = 1 * s.r * a;
-      var r = 2;
+      //R = 1000 * (r / Math.hypot(canvas.height * 0.5, canvas.width * 0.5)) / (frame - s.t);
 
       ctx.beginPath();
-      ctx.arc(x, y, r, 0, 2 * Math.PI);
+      ctx.arc(x, y, R, 0, 2 * Math.PI);
       //ctx.fillStyle = `rgba(255,255,255,${a})`;
       ctx.fillStyle = star_color(s.c, a);
       ctx.fill();
    }
 
+   // update the whole frame
    this.update = function()
    {
       frame++;
 
       fade_out();
-
-      // curve (debugging)
-      if (0)
-      {
-         ctx.save();
-         ctx.translate(canvas.width * 0.5, canvas.height * 0.5);
-         ctx.beginPath();
-         ctx.moveTo(0, 0);
-         let s = star[0];
-         for (let frame = s.t; ; frame++)
-         {
-            let r_ = S * s.r * Math.pow((frame - s.t) * 0.05, 2);
-            if (r_ > Math.hypot(canvas.width * 0.5, canvas.height * 0.5))
-               break;
-            ctx.lineTo(frame - s.t, -r_);
-         }
-         ctx.stroke();
-         ctx.restore();
-      }
 
       ctx.save();
       ctx.translate(canvas.width * 0.5, canvas.height * 0.5);
@@ -123,7 +109,12 @@ function starfield(canvas)
       ctx.restore();
    }
 
+   // init initial stars
+   for (let i = 0; i < cnt; i++)
+      star[i] = {a: 0, r: 0, c: 0, p: 1, t: 0};
    star.forEach(init_star);
+   // inital random star position. This is the inverse function of the star distance function.
+   star.forEach((s) => s.t = -Math.floor(Math.random() * Math.pow(Math.hypot(canvas.width * 0.5, canvas.height * 0.5) / (S * s.r), 1 / s.p) / 0.07));
 
    ctx.strokeStyle = "#20ff20";
    ctx.clearRect(0, 0, canvas.width, canvas.height);
