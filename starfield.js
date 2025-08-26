@@ -12,6 +12,8 @@ function starfield(canvas)
 {
    // drawing context
    var ctx = canvas.getContext('2d');
+   // background fade out mode
+   var fade = 0;  // 1 => fade to black, 0 => fade to transparency
    // frame counter
    var frame = 0;
    // shuttle speed
@@ -38,14 +40,24 @@ function starfield(canvas)
    fade_out = function()
    {
       let f = 0.7;
-      // fade out previous frame
+      // clear previous frame (no fading)
       //ctx.clearRect(0, 0, width, height);
-      ctx.save();
-      ctx.globalCompositeOperation = "destination-out";
-      ctx.globalAlpha = f;
-      ctx.fillStyle = `rgba(255,255,255,${f})`;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.restore();
+      if (fade)
+      {
+         // fade to black
+         ctx.fillStyle = `rgba(0,0,0,${f})`
+         ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+      else
+      {
+         // fade to transparency
+         ctx.save();
+         ctx.globalCompositeOperation = "destination-out";
+         ctx.globalAlpha = f;
+         ctx.fillStyle = `rgba(255,255,255,${f})`;
+         ctx.fillRect(0, 0, canvas.width, canvas.height);
+         ctx.restore();
+      }
    }
 
    star_pulse = function(x)
@@ -139,7 +151,13 @@ function starfield(canvas)
    star.forEach((s) => s.t = -Math.floor(Math.random() * Math.pow(Math.hypot(canvas.width * 0.5, canvas.height * 0.5) / (S * s.r), 1 / s.p) / 0.07));
 
    ctx.strokeStyle = "#20ff20";
-   ctx.clearRect(0, 0, canvas.width, canvas.height);
+   if (fade)
+   {
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+   }
+   else
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
    return this;
 }
