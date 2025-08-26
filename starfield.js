@@ -48,6 +48,13 @@ function starfield(canvas)
       ctx.restore();
    }
 
+   star_pulse = function(x)
+   {
+      var m = 10;
+      x = (x % (2 * m) - m) / m;
+      return Math.exp(Math.abs(x)) / Math.E;
+   }
+
    // Return an Aurora-like HTML color dependent on f, where is 0 <= f <= 1.
    star_color = function(f, a)
    {
@@ -84,15 +91,30 @@ function starfield(canvas)
          return;
       }
 
+      var alpha = Math.max(Math.abs(x) / (canvas.width * 0.5), Math.abs(y) / (canvas.height * 0.5));
+      var style;
+      var radius = R;
+      // make 3% pulsars
+      if (s.c < 0.03)
+         style = star_color(s.c, star_pulse(frame - s.t));
+      // make 3% fuzzy objects
+      else if (s.c > 0.97)
+      {
+         radius = R * 5;
+         style = ctx.createRadialGradient(x, y, 0, x, y, radius);
+         style.addColorStop(0, star_color(s.c, alpha));
+         style.addColorStop(1, "rgba(0,0,0,0)");
+      }
       // star transparency
-      var a = Math.max(Math.abs(x) / (canvas.width * 0.5), Math.abs(y) / (canvas.height * 0.5));
+      else
+         style = star_color(s.c, alpha);
       // star radius
       //R = 1000 * (r / Math.hypot(canvas.height * 0.5, canvas.width * 0.5)) / (frame - s.t);
 
       ctx.beginPath();
-      ctx.arc(x, y, R, 0, 2 * Math.PI);
+      ctx.arc(x, y, radius, 0, 2 * Math.PI);
       //ctx.fillStyle = `rgba(255,255,255,${a})`;
-      ctx.fillStyle = star_color(s.c, a);
+      ctx.fillStyle = style;
       ctx.fill();
    }
 
