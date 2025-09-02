@@ -48,7 +48,7 @@ function clouds(canvas)
 
    col_mf = function(n, sqbits)
    {
-      return n / (sqbits * 0.5);
+      return n / sqbits;
    }
 
 
@@ -74,15 +74,7 @@ function clouds(canvas)
 
       ni = sqbits - 1;
       na = 1 << sqbits;
-      mf = col_mf(ni + 1, sqbits);
 
-      /*
-     bd[0][0] = get_color(maxval_ / 2, mf);
-     bd[0][na] = get_color(maxval_ / 2, mf);
-     bd[na][0] = get_color(maxval_ / 2, mf);
-     bd[na][na] = get_color(maxval_ / 2, mf);
-     */
-      bd[0][0] = bd[na][0] = bd[0][na] = bd[na][na] = 0;
       n = na;
       for (i = 0; i <= ni; i++)
       {
@@ -92,15 +84,12 @@ function clouds(canvas)
          {
             f1 = bd[(j - 1) * n][0];
             f2 = bd[j * n][0];
-            //bd[j * n - n1][0] = get_color((f1 + f2) * 0.5, mf);
             set_pixel(j * n - n1, 0, get_color((f1 + f2) * 0.5, mf));;
             f1 = bd[(j - 1) * n][na];
             f2 = bd[j * n][na];
-            //bd[j * n - n1][na] = get_color((f1 + f2) * 0.5, mf);
             set_pixel(j * n - n1, na, get_color((f1 + f2) * 0.5, mf));
             f1 = bd[0][(j - 1) * n];
             f2 = bd[0][j * n];
-            //bd[0][j * n - n1] = get_color((f1 + f2) * 0.5, mf);
             set_pixel(0, j * n - n1, get_color((f1 + f2) * 0.5, mf));
             f1 = bd[na][(j - 1) * n];
             f2 = bd[na][j * n];
@@ -120,7 +109,6 @@ function clouds(canvas)
                f2 = bd[(j - 1) * n][k * n];
                f3 = bd[j * n][(k - 1) * n];
                f4 = bd[j * n][k * n];
-               //bd[j * n - n1][k * n - n1] = get_color((f1 + f2 + f3 + f4) * 0.25, mf);
                set_pixel(j * n - n1, k * n - n1, get_color((f1 + f2 + f3 + f4) * 0.25, mf));
             }
          nk = 0;
@@ -133,7 +121,6 @@ function clouds(canvas)
                f2 = bd[j * n + nk * n1][k * n1];
                f3 = bd[j * n - n1 + nk * n1][(k + 1) * n1];
                f4 = bd[(j - 1) * n + nk * n1][k * n1];
-               //bd[j * n - n1 + nk * n1][k * n1] = get_color((f1 + f2 + f3 + f4) * 0.25, mf);
                set_pixel(j * n - n1 + nk * n1, k * n1, get_color((f1 + f2 + f3 + f4) * 0.25, mf));
             }
          }
@@ -183,6 +170,7 @@ function clouds(canvas)
    //clear_data();
    //console.log(bd);
 
+   bd[0][0] = bd[bcnt][0] = bd[0][bcnt] = bd[bcnt][bcnt] = 0;
    populate(sqbits);
    console.log(`min = ${min}, max = ${max}`);
    canvas.style.filter = "blur(4px)";
