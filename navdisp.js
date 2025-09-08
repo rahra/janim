@@ -71,8 +71,9 @@ function nav_display(canvas)
    var fgcolor = "white";
    //! background color
    var bgcolor = "black";
-   //! font spec, e.g.  "30px sans-serif"
-   var font = "70px Jockey One";
+   var font = "Jockey One";
+   //var font = "Hack";
+   var fontpx = 70;
    //! line width
    var line_width = 3;
    //! box width
@@ -107,7 +108,8 @@ function nav_display(canvas)
       var sx = (box_width - border * 2) / range;
       var s = Math.floor(v - range / 2);
 
-      ctx.font = "20px Jockey One";
+      //ctx.font = "20px Jockey One";
+      ctx.font = (fontpx * 0.3) + "px " + font;
 
       for (var i = s; i < s + range; i++)
       {
@@ -143,7 +145,8 @@ function nav_display(canvas)
     */
    function draw()
    {
-      ctx.font = font;
+      //ctx.font = font;
+      ctx.font = fontpx + "px " + font;
       ctx.fillStyle = fgcolor;
       ctx.strokeStyle = fgcolor;
       ctx.lineWidth = line_width;
