@@ -142,6 +142,8 @@ function init_args(argv)
       rp_.outfile = date_str();
       if (rp_.vcodec == "vp9")
          rp_.outfile += ".webm";
+      else if (rp_.vcodec == "webp")
+         rp_.outfile += ".webp";
       else
          rp_.outfile += ".mkv";
    }
