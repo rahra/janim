@@ -10,6 +10,8 @@ Janim does not create the video files itself but it relies on `ffmpeg` to do so.
 
 This package contains the following files:
 
+| Filename | Description |
+| -------- | ----------- |
 | `ffpipe.js` | The work horse for piping the canvas to ffmpeg. |
 | `package.json` | The dependencies to be installed by npm. |
 | `index.html` | The HTML file to be viewed with a browser (edit the script tag to your needs). |
