@@ -18,13 +18,13 @@ function createBezierPix(canvas)
    ctx.lineCap = "round";
 
    //! start point
-   const p0 = { x: 75, y: 60};
+   const p0 = { x: 150, y: 120};
    //! control point 0
-   const p1 = { x: 300, y: -50};
+   const p1 = { x: 600, y: -50};
    //! control point 1
-   const p2 = { x: 35, y: 280};
+   const p2 = { x: 70, y: 560};
    //! end point
-   const p3 = { x: 65, y: 85};
+   const p3 = { x: 130, y: 170};
    //! flatness of the curve (lower flatness creates more intermediate pixels)
    const flatness = 0.5;
 
@@ -81,16 +81,13 @@ function createBezierPix(canvas)
          maxy = Math.max(p.y, maxy);
       });
 
-      console.log(`${minx} - ${maxx}, ${miny} - ${maxy}`);
-      ctx.translate((canvas.width - maxx + minx) * 0.5, (canvas.height - maxy + miny) * 0.5);
+      ctx.translate((canvas.width - maxx - minx) * 0.5, (canvas.height - maxy - miny) * 0.5);
    }
 
    // push initial starting point
    pixels.push({ x: Math.round(p0.x), y: Math.round(p0.y) });
    // calculate all pixels
    subdivide(p0, p1, p2, p3);
-
-
 
    var frame = 0;
    ctx.clearRect(0, 0, canvas.width, canvas.height);
